@@ -90,7 +90,7 @@ export const Setup: React.FC<SetupProps> = ({ username, onStart, onLogout }) => 
               <p>Configure your quiz rules below.</p>
             </div>
           </div>
-          <button onClick={onLogout} className="btn-icon-text text-danger" title="Logout">
+          <button onClick={onLogout} id="logout-btn" className="btn-icon-text text-danger" title="Logout">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
               <polyline points="16 17 21 12 16 7"/>
@@ -209,7 +209,7 @@ export const Setup: React.FC<SetupProps> = ({ username, onStart, onLogout }) => 
             </div>
           </div>
 
-          <button type="submit" className="btn btn-primary btn-large" disabled={loading}>
+          <button type="submit" id="start-quiz-btn" className="btn btn-primary btn-large" disabled={loading}>
             {loading ? (
               <span className="spinner-loader">Loading categories...</span>
             ) : (
