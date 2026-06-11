@@ -1,6 +1,9 @@
 import React from 'react';
 import type { Question } from '../App';
 import { decodeHtml } from '../utils/htmlDecoder';
+import { Progress } from '@/components/ui/progress';
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
+import { User, Timer } from 'lucide-react';
 
 interface QuizProps {
   questions: Question[];
@@ -20,7 +23,13 @@ export const Quiz: React.FC<QuizProps> = ({
   const currentQuestion = questions[currentIndex];
   
   if (!currentQuestion) {
-    return <div className="card-container"><div className="card">Loading question...</div></div>;
+    return (
+      <div className="w-full max-w-2xl mx-auto">
+        <Card className="border-slate-800 bg-slate-900/60 text-white p-8">
+          Loading question...
+        </Card>
+      </div>
+    );
   }
 
   const answeredCount = questions.filter(q => q.selected_answer !== undefined).length;
@@ -34,7 +43,12 @@ export const Quiz: React.FC<QuizProps> = ({
   };
 
   // Determine timer warning level
-  const timerClass = timeLeft < 15 ? 'timer-danger' : timeLeft < 30 ? 'timer-warning' : 'timer-normal';
+  const timerClass = 
+    timeLeft < 15 
+      ? 'bg-red-500/10 text-red-400 border-red-500/30' 
+      : timeLeft < 30 
+      ? 'bg-amber-500/10 text-amber-400 border-amber-500/30' 
+      : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30';
 
   // Progress percentage
   const progressPercent = (currentIndex / totalQuestions) * 100;
@@ -45,80 +59,86 @@ export const Quiz: React.FC<QuizProps> = ({
   };
 
   return (
-    <div className="card-container fade-in">
-      <div className="quiz-card">
+    <div className="w-full max-w-2xl mx-auto fade-in">
+      <Card className="border-slate-800 bg-slate-900/60 backdrop-blur-xl shadow-2xl relative overflow-hidden">
+        {/* Top Glow bar indicating active quiz state */}
+        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-violet-500 via-fuchsia-500 to-cyan-500"></div>
+
         {/* Top Header Row with Timer & Progress */}
-        <div className="quiz-header">
-          <div className="quiz-user-info">
-            <span className="user-badge">
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                <circle cx="12" cy="7" r="4"/>
-              </svg>
+        <CardHeader className="flex flex-row items-center justify-between pb-4 pt-8 px-8">
+          <div className="flex items-center">
+            <span className="bg-slate-950/60 border border-slate-800 text-slate-300 px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5">
+              <User className="w-3.5 h-3.5" />
               {username}
             </span>
           </div>
 
-          <div className={`quiz-timer ${timerClass}`}>
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={timeLeft < 15 ? 'pulse' : ''}>
-              <circle cx="12" cy="12" r="10"/>
-              <polyline points="12 6 12 12 16 14"/>
-            </svg>
+          <div className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl border text-sm font-bold font-heading ${timerClass}`}>
+            <Timer className={`w-4 h-4 ${timeLeft < 15 ? 'animate-pulse' : ''}`} />
             <span>{formatTime(timeLeft)}</span>
           </div>
+        </CardHeader>
+
+        {/* Top progress bar (screens transition) */}
+        <div className="px-8 mb-4">
+          <Progress value={progressPercent} className="h-[6px] bg-slate-950" />
         </div>
 
-        {/* Double progress bars: completion of screens (top) & answers count (bottom) */}
-        <div className="progress-bar-container">
-          <div className="progress-bar-fill" style={{ width: `${progressPercent}%` }} title="Current position" />
-        </div>
+        <CardContent className="px-8 pb-6 pt-2 text-left">
+          {/* Question Stats Summary */}
+          <div className="flex justify-between text-xs text-slate-400 font-semibold uppercase tracking-wider mb-6 border-b border-slate-800/80 pb-4">
+            <span>Question <strong className="text-white">{currentIndex + 1}</strong> of <strong className="text-white">{totalQuestions}</strong></span>
+            <span>Answered: <strong className="text-white">{answeredCount}</strong> / <strong className="text-white">{totalQuestions}</strong></span>
+          </div>
 
-        <div className="quiz-stats-summary">
-          <span>Question <strong>{currentIndex + 1}</strong> of <strong>{totalQuestions}</strong></span>
-          <span>Answered: <strong>{answeredCount}</strong> / <strong>{totalQuestions}</strong></span>
-        </div>
-
-        {/* Question Area */}
-        <div className="question-area">
-          <div className="badges-row">
-            <span className="badge badge-category">{decodeHtml(currentQuestion.category)}</span>
-            <span className={`badge badge-difficulty difficulty-${currentQuestion.difficulty}`}>
-              {currentQuestion.difficulty.toUpperCase()}
+          {/* Category & Difficulty badges */}
+          <div className="flex gap-2 mb-4">
+            <span className="bg-slate-950/60 border border-slate-800 text-slate-300 text-[10px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wider">
+              {decodeHtml(currentQuestion.category)}
+            </span>
+            <span className={`text-[10px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wider text-slate-950
+              ${currentQuestion.difficulty === 'easy' ? 'bg-emerald-500' : currentQuestion.difficulty === 'medium' ? 'bg-amber-500' : 'bg-red-500'}`}>
+              {currentQuestion.difficulty}
             </span>
           </div>
 
-          <h2 className="question-text">
+          {/* Question Text */}
+          <h2 className="text-xl font-bold font-heading text-white leading-snug mb-8">
             {decodeHtml(currentQuestion.question)}
           </h2>
 
           {/* Options Grid */}
-          <div className="options-grid">
+          <div className="grid grid-cols-1 gap-3">
             {currentQuestion.shuffled_options.map((option, idx) => {
               const letter = String.fromCharCode(65 + idx); // A, B, C, D
               return (
                 <button
                   key={idx}
                   onClick={() => handleOptionClick(option)}
-                  className="option-button"
+                  className="w-full flex items-center gap-4 bg-slate-950/40 border border-slate-800/80 hover:border-violet-500 hover:bg-violet-950/10 text-white rounded-xl p-4 text-left cursor-pointer transition-all duration-200 hover:translate-x-[4px] group"
                 >
-                  <span className="option-letter">{letter}</span>
-                  <span className="option-content">{decodeHtml(option)}</span>
+                  <span className="w-7 h-7 rounded-lg bg-slate-950 border border-slate-800 text-slate-400 font-bold flex items-center justify-center text-xs font-heading group-hover:bg-violet-600 group-hover:border-violet-500 group-hover:text-white transition-all duration-200">
+                    {letter}
+                  </span>
+                  <span className="flex-1 text-slate-200 group-hover:text-white font-medium text-sm transition-all duration-200">
+                    {decodeHtml(option)}
+                  </span>
                 </button>
               );
             })}
           </div>
-        </div>
+        </CardContent>
 
         {/* Footer info showing answer status */}
-        <div className="quiz-footer">
-          <div className="answer-progress-container">
-            <span className="text-muted text-xs">Total answers provided: {answeredCount} ({Math.round(answeredPercent)}%)</span>
-            <div className="answer-progress-track">
-              <div className="answer-progress-fill" style={{ width: `${answeredPercent}%` }}></div>
-            </div>
+        <CardFooter className="px-8 pb-8 pt-4 border-t border-slate-800/80 flex flex-col items-stretch text-left">
+          <div className="space-y-2">
+            <span className="text-slate-400 text-xs font-semibold">
+              Total answers provided: {answeredCount} ({Math.round(answeredPercent)}%)
+            </span>
+            <Progress value={answeredPercent} className="h-1 bg-slate-950" />
           </div>
-        </div>
-      </div>
+        </CardFooter>
+      </Card>
     </div>
   );
 };

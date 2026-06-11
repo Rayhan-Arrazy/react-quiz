@@ -4,6 +4,9 @@ import { Setup } from './components/Setup';
 import type { QuizConfig } from './components/Setup';
 import { Quiz } from './components/Quiz';
 import { Results } from './components/Results';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { AlertTriangle } from 'lucide-react';
 
 export interface Question {
   category: string;
@@ -311,29 +314,28 @@ export default function App() {
           </div>
         )}
 
-        {/* Saved Session Resume Modal */}
-        {savedSession && (
-          <div className="modal-backdrop">
-            <div className="modal-content fade-in">
-              <div className="modal-header">
-                <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-warning">
-                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-                  <line x1="12" y1="9" x2="12" y2="13"/>
-                  <line x1="12" y1="17" x2="12.01" y2="17"/>
-                </svg>
-                <h2>Unfinished Quiz Found!</h2>
+        {/* Saved Session Resume Modal using Shadcn Dialog */}
+        <Dialog open={!!savedSession} onOpenChange={() => {}}>
+          <DialogContent className="border-slate-800 bg-slate-900/95 text-white max-w-md rounded-2xl">
+            <DialogHeader className="text-center flex flex-col items-center">
+              <div className="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center mb-3 animate-bounce">
+                <AlertTriangle className="w-6 h-6" />
               </div>
-              <div className="modal-body">
-                <p>Hello <strong>{savedSession.username}</strong>, we detected a quiz that was not finished. You had <strong>{savedSession.questions.length - savedSession.currentIndex}</strong> questions remaining out of <strong>{savedSession.questions.length}</strong>, with <strong>{Math.floor(savedSession.timeLeft / 60)}m {savedSession.timeLeft % 60}s</strong> left on the clock.</p>
-                <p>Would you like to resume it now or start a new quiz?</p>
-              </div>
-              <div className="modal-footer">
-                <button onClick={handleDiscardSession} className="btn btn-secondary">Discard & Start New</button>
-                <button onClick={handleResumeSession} className="btn btn-primary">Resume Quiz</button>
-              </div>
-            </div>
-          </div>
-        )}
+              <DialogTitle className="text-xl font-bold font-heading text-white">Unfinished Quiz Found!</DialogTitle>
+              <DialogDescription className="text-slate-400 text-sm text-center mt-2 leading-relaxed">
+                Hello <strong>{savedSession?.username}</strong>, we found an unfinished active quiz. You have <strong>{savedSession ? savedSession.questions.length - savedSession.currentIndex : 0}</strong> questions left and <strong>{savedSession ? Math.floor(savedSession.timeLeft / 60) : 0}m {savedSession ? savedSession.timeLeft % 60 : 0}s</strong> remaining on the timer.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter className="mt-6 flex flex-row gap-3 w-full">
+              <Button variant="secondary" onClick={handleDiscardSession} className="flex-1 bg-slate-950 border-slate-800 text-slate-300 hover:bg-slate-900 hover:text-white rounded-xl h-11 text-xs">
+                Discard & Start New
+              </Button>
+              <Button onClick={handleResumeSession} className="flex-1 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-semibold rounded-xl h-11 text-xs shadow-lg shadow-violet-500/20">
+                Resume Quiz
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
 
         {/* Core screens routes */}
         {status === 'login' && !savedSession && (

@@ -1,4 +1,16 @@
 import React, { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { Slider } from '@/components/ui/slider';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { LogOut, Play } from 'lucide-react';
 
 export interface QuizConfig {
   amount: number;
@@ -26,9 +38,9 @@ export const Setup: React.FC<SetupProps> = ({ username, onStart, onLogout }) => 
   
   // Quiz configuration states
   const [amount, setAmount] = useState(10);
-  const [category, setCategory] = useState('');
-  const [difficulty, setDifficulty] = useState('');
-  const [type, setType] = useState('');
+  const [category, setCategory] = useState('any');
+  const [difficulty, setDifficulty] = useState('any');
+  const [type, setType] = useState('any');
   const [timeLimit, setTimeLimit] = useState(120); // default 2 minutes (120 seconds)
 
   useEffect(() => {
@@ -68,161 +80,171 @@ export const Setup: React.FC<SetupProps> = ({ username, onStart, onLogout }) => 
     const categoryName = selectedCat ? selectedCat.name : 'Any Category';
 
     onStart({
-      amount: Math.max(1, Math.min(50, amount)), // clamp between 1 and 50 to avoid API rejection
-      category,
+      amount,
+      category: category === 'any' ? '' : category,
       categoryName,
-      difficulty,
-      type,
-      timeLimit: Math.max(10, timeLimit), // minimum 10 seconds
+      difficulty: difficulty === 'any' ? '' : difficulty,
+      type: type === 'any' ? '' : type,
+      timeLimit,
     });
   };
 
   return (
-    <div className="card-container fade-in">
-      <div className="setup-card">
-        <div className="setup-header">
-          <div className="user-greeting">
-            <div className="avatar">
+    <div className="w-full max-w-2xl mx-auto fade-in">
+      <Card className="border-slate-800 bg-slate-900/60 backdrop-blur-xl shadow-2xl relative overflow-hidden">
+        {/* Glow indicator at the top */}
+        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-violet-500 via-fuchsia-500 to-cyan-500"></div>
+
+        <CardHeader className="flex flex-row items-center justify-between border-b border-slate-800/80 pb-6 pt-8 px-8">
+          <div className="flex items-center gap-3 text-left">
+            <div className="w-11 h-11 rounded-xl bg-cyan-950 border border-cyan-500 text-cyan-400 flex items-center justify-center font-extrabold text-sm shadow-md shadow-cyan-500/10">
               {username.slice(0, 2).toUpperCase()}
             </div>
             <div>
-              <h3>Welcome back, {username}!</h3>
-              <p>Configure your quiz rules below.</p>
+              <CardTitle className="text-lg font-bold text-white font-heading">
+                Welcome back, {username}!
+              </CardTitle>
+              <CardDescription className="text-slate-400 text-xs">
+                Configure your game settings below
+              </CardDescription>
             </div>
           </div>
-          <button onClick={onLogout} id="logout-btn" className="btn-icon-text text-danger" title="Logout">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-              <polyline points="16 17 21 12 16 7"/>
-              <line x1="21" y1="12" x2="9" y2="12"/>
-            </svg>
-            <span>Logout</span>
-          </button>
-        </div>
+          <Button 
+            variant="ghost" 
+            onClick={onLogout} 
+            id="logout-btn"
+            className="text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg h-9 px-3 gap-2"
+          >
+            <LogOut className="w-4 h-4" />
+            <span className="text-xs font-semibold">Logout</span>
+          </Button>
+        </CardHeader>
 
-        <form onSubmit={handleSubmit} className="setup-form">
-          <div className="form-grid">
-            {/* Number of Questions */}
-            <div className="input-group">
-              <label htmlFor="amount">Number of Questions (1 - 50)</label>
-              <div className="range-container">
-                <input
-                  type="range"
-                  id="amount-slider"
-                  min="5"
-                  max="50"
-                  step="5"
-                  value={amount}
-                  onChange={(e) => setAmount(parseInt(e.target.value))}
-                />
-                <input
-                  type="number"
-                  id="amount"
-                  min="1"
-                  max="50"
-                  value={amount}
-                  onChange={(e) => {
-                    const val = parseInt(e.target.value);
-                    setAmount(isNaN(val) ? 10 : val);
-                  }}
-                  className="number-input"
-                />
+        <form onSubmit={handleSubmit}>
+          <CardContent className="p-8 space-y-6 text-left">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              
+              {/* Number of Questions */}
+              <div className="space-y-3">
+                <div className="flex justify-between items-center">
+                  <Label htmlFor="amount-slider" className="text-slate-300 text-xs font-semibold uppercase tracking-wider">
+                    Number of Questions
+                  </Label>
+                  <span className="text-cyan-400 font-bold font-heading text-sm">{amount}</span>
+                </div>
+                <div className="flex items-center gap-4 py-2">
+                  <Slider
+                    id="amount-slider"
+                    min={5}
+                    max={50}
+                    step={5}
+                    value={[amount]}
+                    onValueChange={(val: number[]) => setAmount(val[0])}
+                    className="flex-1"
+                  />
+                </div>
               </div>
-            </div>
 
-            {/* Time Limit */}
-            <div className="input-group">
-              <label htmlFor="timeLimit">Time Limit (seconds)</label>
-              <div className="range-container">
-                <input
-                  type="range"
-                  id="timeLimit-slider"
-                  min="30"
-                  max="600"
-                  step="30"
-                  value={timeLimit}
-                  onChange={(e) => setTimeLimit(parseInt(e.target.value))}
-                />
-                <input
-                  type="number"
-                  id="timeLimit"
-                  min="10"
-                  max="3600"
-                  value={timeLimit}
-                  onChange={(e) => {
-                    const val = parseInt(e.target.value);
-                    setTimeLimit(isNaN(val) ? 120 : val);
-                  }}
-                  className="number-input"
-                />
+              {/* Time Limit */}
+              <div className="space-y-3">
+                <div className="flex justify-between items-center">
+                  <Label htmlFor="timeLimit-slider" className="text-slate-300 text-xs font-semibold uppercase tracking-wider">
+                    Time Limit
+                  </Label>
+                  <span className="text-violet-400 font-bold font-heading text-sm">
+                    {Math.floor(timeLimit / 60)}m {timeLimit % 60}s
+                  </span>
+                </div>
+                <div className="flex items-center gap-4 py-2">
+                  <Slider
+                    id="timeLimit-slider"
+                    min={30}
+                    max={600}
+                    step={30}
+                    value={[timeLimit]}
+                    onValueChange={(val: number[]) => setTimeLimit(val[0])}
+                    className="flex-1"
+                  />
+                </div>
               </div>
-              <span className="helper-text">
-                ({Math.floor(timeLimit / 60)}m {timeLimit % 60}s)
-              </span>
-            </div>
 
-            {/* Category */}
-            <div className="input-group">
-              <label htmlFor="category">Category</label>
-              <select
-                id="category"
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                disabled={loading}
-              >
-                <option value="">Any Category</option>
-                {categories.map((cat) => (
-                  <option key={cat.id} value={cat.id}>
-                    {cat.name}
-                  </option>
-                ))}
-              </select>
-            </div>
+              {/* Category */}
+              <div className="space-y-2">
+                <Label htmlFor="category" className="text-slate-300 text-xs font-semibold uppercase tracking-wider">
+                  Category
+                </Label>
+                <Select value={category} onValueChange={setCategory} disabled={loading}>
+                  <SelectTrigger id="category" className="bg-slate-950/80 border-slate-800 text-white rounded-xl h-11 focus:ring-violet-500 focus:border-violet-500">
+                    <SelectValue placeholder="Any Category" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-slate-900 border-slate-800 text-white rounded-xl">
+                    <SelectItem value="any">Any Category</SelectItem>
+                    {categories.map((cat) => (
+                      <SelectItem key={cat.id} value={cat.id.toString()}>
+                        {cat.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
-            {/* Difficulty */}
-            <div className="input-group">
-              <label htmlFor="difficulty">Difficulty</label>
-              <select
-                id="difficulty"
-                value={difficulty}
-                onChange={(e) => setDifficulty(e.target.value)}
-              >
-                <option value="">Any Difficulty</option>
-                <option value="easy">Easy</option>
-                <option value="medium">Medium</option>
-                <option value="hard">Hard</option>
-              </select>
-            </div>
+              {/* Difficulty */}
+              <div className="space-y-2">
+                <Label htmlFor="difficulty" className="text-slate-300 text-xs font-semibold uppercase tracking-wider">
+                  Difficulty
+                </Label>
+                <Select value={difficulty} onValueChange={setDifficulty}>
+                  <SelectTrigger id="difficulty" className="bg-slate-950/80 border-slate-800 text-white rounded-xl h-11 focus:ring-violet-500 focus:border-violet-500">
+                    <SelectValue placeholder="Any Difficulty" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-slate-900 border-slate-800 text-white rounded-xl">
+                    <SelectItem value="any">Any Difficulty</SelectItem>
+                    <SelectItem value="easy">Easy</SelectItem>
+                    <SelectItem value="medium">Medium</SelectItem>
+                    <SelectItem value="hard">Hard</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
 
-            {/* Question Type */}
-            <div className="input-group full-width">
-              <label htmlFor="type">Question Type</label>
-              <select
-                id="type"
-                value={type}
-                onChange={(e) => setType(e.target.value)}
-              >
-                <option value="">Any Type</option>
-                <option value="multiple">Multiple Choice</option>
-                <option value="boolean">True / False</option>
-              </select>
-            </div>
-          </div>
+              {/* Question Type */}
+              <div className="space-y-2 md:col-span-2">
+                <Label htmlFor="type" className="text-slate-300 text-xs font-semibold uppercase tracking-wider">
+                  Question Type
+                </Label>
+                <Select value={type} onValueChange={setType}>
+                  <SelectTrigger id="type" className="bg-slate-950/80 border-slate-800 text-white rounded-xl h-11 focus:ring-violet-500 focus:border-violet-500">
+                    <SelectValue placeholder="Any Type" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-slate-900 border-slate-800 text-white rounded-xl">
+                    <SelectItem value="any">Any Type</SelectItem>
+                    <SelectItem value="multiple">Multiple Choice</SelectItem>
+                    <SelectItem value="boolean">True / False</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
 
-          <button type="submit" id="start-quiz-btn" className="btn btn-primary btn-large" disabled={loading}>
-            {loading ? (
-              <span className="spinner-loader">Loading categories...</span>
-            ) : (
-              <>
-                <span>Start Quiz</span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <polygon points="5 3 19 12 5 21 5 3"/>
-                </svg>
-              </>
-            )}
-          </button>
+            </div>
+          </CardContent>
+
+          <CardFooter className="px-8 pb-8">
+            <Button
+              type="submit"
+              id="start-quiz-btn"
+              disabled={loading}
+              className="w-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-semibold rounded-xl h-12 shadow-lg shadow-violet-500/20 transition-all duration-300 hover:translate-y-[-1px] active:translate-y-[1px]"
+            >
+              {loading ? (
+                <span>Loading categories...</span>
+              ) : (
+                <>
+                  <span>Start Quiz</span>
+                  <Play className="w-4 h-4 ml-2 fill-white" />
+                </>
+              )}
+            </Button>
+          </CardFooter>
         </form>
-      </div>
+      </Card>
     </div>
   );
 };

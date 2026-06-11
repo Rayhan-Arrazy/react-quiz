@@ -1,6 +1,9 @@
 import React from 'react';
 import type { Question } from '../App';
 import { decodeHtml } from '../utils/htmlDecoder';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Check, X, RotateCcw, AlertCircle, FileText, Trophy, Clock } from 'lucide-react';
 
 interface ResultsProps {
   questions: Question[];
@@ -30,212 +33,224 @@ export const Results: React.FC<ResultsProps> = ({
 
   // Performance feedback message
   let feedbackMessage = 'Keep learning!';
-  let feedbackColor = 'text-warning';
+  let feedbackColor = 'text-amber-400';
   if (scorePercentage >= 80) {
     feedbackMessage = 'Excellent! You are a Trivia Master!';
-    feedbackColor = 'text-success';
+    feedbackColor = 'text-emerald-400';
   } else if (scorePercentage >= 50) {
     feedbackMessage = 'Good job! Nice effort!';
-    feedbackColor = 'text-info';
+    feedbackColor = 'text-cyan-400';
   } else if (timeRanOut && totalAnswered === 0) {
     feedbackMessage = "Time ran out before you could start!";
-    feedbackColor = 'text-danger';
+    feedbackColor = 'text-red-400';
   } else if (timeRanOut) {
     feedbackMessage = 'Time ran out! Try to answer faster next time.';
-    feedbackColor = 'text-danger';
+    feedbackColor = 'text-red-400';
   }
 
   return (
-    <div className="card-container fade-in">
-      <div className="results-card">
-        
+    <div className="w-full max-w-3xl mx-auto fade-in">
+      <Card className="border-slate-800 bg-slate-900/60 backdrop-blur-xl shadow-2xl relative overflow-hidden">
+        {/* Top Glow bar indicating active quiz state */}
+        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-violet-500 via-fuchsia-500 to-cyan-500"></div>
+
         {/* Results Header */}
-        <div className="results-header">
-          <h2>Quiz Completed!</h2>
-          <p className="subtitle">Here is how you performed, {username}</p>
+        <CardHeader className="text-center pt-10 pb-6">
+          <CardTitle className="text-3xl font-extrabold tracking-tight text-white font-heading">
+            Quiz Completed!
+          </CardTitle>
+          <CardDescription className="text-slate-400 text-sm mt-2">
+            Here is how you performed, {username}
+          </CardDescription>
+
           {timeRanOut && (
-            <div className="alert-badge warning-alert pulse">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="10"/>
-                <line x1="12" y1="8" x2="12" y2="12"/>
-                <line x1="12" y1="16" x2="12.01" y2="16"/>
-              </svg>
+            <div className="mx-auto mt-4 inline-flex items-center gap-2 bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-2 rounded-xl text-sm font-semibold animate-pulse">
+              <AlertCircle className="w-4 h-4" />
               <span>Timer Ran Out!</span>
             </div>
           )}
-        </div>
+        </CardHeader>
 
-        {/* Dashboard Layout */}
-        <div className="dashboard-grid">
-          {/* Circular Score Gauge */}
-          <div className="gauge-panel">
-            <div className="score-ring">
-              <svg width="160" height="160" viewBox="0 0 160 160">
-                <circle
-                  cx="80"
-                  cy="80"
-                  r="70"
-                  className="score-ring-bg"
-                />
-                <circle
-                  cx="80"
-                  cy="80"
-                  r="70"
-                  className="score-ring-fill"
-                  style={{
-                    strokeDasharray: `${2 * Math.PI * 70}`,
-                    strokeDashoffset: `${2 * Math.PI * 70 * (1 - scorePercentage / 100)}`
-                  }}
-                />
-              </svg>
-              <div className="score-value-container">
-                <span className="score-percent">{scorePercentage}%</span>
-                <span className="score-fraction">{correctAnswers} / {totalQuestions}</span>
-              </div>
-            </div>
-            <h3 className={`feedback-text ${feedbackColor}`}>{feedbackMessage}</h3>
-          </div>
-
-          {/* Stats Cards */}
-          <div className="stats-panel">
-            <div className="stat-card stat-correct">
-              <div className="stat-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="20 6 9 17 4 12"/>
+        <CardContent className="p-8 space-y-8 text-left">
+          
+          {/* Dashboard Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-8 items-center border-b border-slate-800/80 pb-8">
+            
+            {/* Circular Score Gauge */}
+            <div className="md:col-span-2 flex flex-col items-center gap-4">
+              <div className="relative w-40 h-40">
+                <svg width="160" height="160" viewBox="0 0 160 160">
+                  <circle
+                    cx="80"
+                    cy="80"
+                    r="70"
+                    className="fill-none stroke-slate-950 stroke-[8px]"
+                  />
+                  <circle
+                    cx="80"
+                    cy="80"
+                    r="70"
+                    className="fill-none stroke-violet-500 stroke-[8px] stroke-linecap-round transition-all duration-1000 ease-out"
+                    style={{
+                      strokeDasharray: `${2 * Math.PI * 70}`,
+                      strokeDashoffset: `${2 * Math.PI * 70 * (1 - scorePercentage / 100)}`,
+                      transform: 'rotate(-90deg)',
+                      transformOrigin: '50% 50%'
+                    }}
+                  />
                 </svg>
+                <div className="absolute top-50% left-50% translate-x-[-50%] translate-y-[-50%] flex flex-col items-center">
+                  <span className="text-3xl font-black text-white font-heading leading-none">
+                    {scorePercentage}%
+                  </span>
+                  <span className="text-xs text-slate-400 font-semibold mt-1">
+                    {correctAnswers} / {totalQuestions}
+                  </span>
+                </div>
               </div>
-              <div className="stat-info">
-                <span className="stat-value">{correctAnswers}</span>
-                <span className="stat-label">Correct Answers</span>
-              </div>
+              <h3 className={`text-base font-bold font-heading text-center ${feedbackColor}`}>
+                {feedbackMessage}
+              </h3>
             </div>
 
-            <div className="stat-card stat-incorrect">
-              <div className="stat-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="18" y1="6" x2="6" y2="18"/>
-                  <line x1="6" y1="6" x2="18" y2="18"/>
-                </svg>
-              </div>
-              <div className="stat-info">
-                <span className="stat-value">{incorrectAnswers}</span>
-                <span className="stat-label">Incorrect Answers</span>
-              </div>
-            </div>
-
-            <div className="stat-card stat-unanswered">
-              <div className="stat-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="10"/>
-                  <polyline points="12 6 12 12 16 14"/>
-                </svg>
-              </div>
-              <div className="stat-info">
-                <span className="stat-value">{unansweredAnswers}</span>
-                <span className="stat-label">Unanswered</span>
-              </div>
-            </div>
-
-            <div className="stat-card stat-total">
-              <div className="stat-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
-                  <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-                </svg>
-              </div>
-              <div className="stat-info">
-                <span className="stat-value">{totalQuestions}</span>
-                <span className="stat-label">Total Questions</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Detailed Review Section */}
-        <div className="review-section">
-          <h3>Question Review</h3>
-          <div className="review-list">
-            {questions.map((q, idx) => {
-              const isCorrect = q.selected_answer !== undefined && q.selected_answer === q.correct_answer;
-              const isUnanswered = q.selected_answer === undefined;
+            {/* Stats Panel */}
+            <div className="md:col-span-3 grid grid-cols-2 gap-3">
               
-              let statusClass = 'review-card-correct';
-              let icon = (
-                <span className="review-badge-icon badge-correct">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="20 6 9 17 4 12"/>
-                  </svg>
-                </span>
-              );
+              {/* Correct Answers */}
+              <div className="bg-slate-950/40 border border-slate-800/80 rounded-xl p-4 flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
+                  <Check className="w-5 h-5" />
+                </div>
+                <div>
+                  <p className="text-lg font-bold text-white leading-none">{correctAnswers}</p>
+                  <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider mt-1">Correct</p>
+                </div>
+              </div>
 
-              if (isUnanswered) {
-                statusClass = 'review-card-unanswered';
-                icon = (
-                  <span className="review-badge-icon badge-unanswered">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                      <line x1="12" y1="8" x2="12" y2="12"/>
-                      <line x1="12" y1="16" x2="12.01" y2="16"/>
-                    </svg>
-                  </span>
-                );
-              } else if (!isCorrect) {
-                statusClass = 'review-card-incorrect';
-                icon = (
-                  <span className="review-badge-icon badge-incorrect">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                      <line x1="18" y1="6" x2="6" y2="18"/>
-                      <line x1="6" y1="6" x2="18" y2="18"/>
-                    </svg>
-                  </span>
-                );
-              }
+              {/* Incorrect Answers */}
+              <div className="bg-slate-950/40 border border-slate-800/80 rounded-xl p-4 flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-red-500/10 text-red-400 flex items-center justify-center">
+                  <X className="w-5 h-5" />
+                </div>
+                <div>
+                  <p className="text-lg font-bold text-white leading-none">{incorrectAnswers}</p>
+                  <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider mt-1">Incorrect</p>
+                </div>
+              </div>
 
-              return (
-                <div key={idx} className={`review-card ${statusClass}`}>
-                  <div className="review-card-header">
-                    <div className="review-q-num">
-                      {icon}
-                      <span>Question {idx + 1}</span>
-                    </div>
-                    <span className="badge badge-difficulty-xs">{q.difficulty}</span>
-                  </div>
+              {/* Unanswered */}
+              <div className="bg-slate-950/40 border border-slate-800/80 rounded-xl p-4 flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-slate-900 text-slate-400 flex items-center justify-center">
+                  <Clock className="w-5 h-5" />
+                </div>
+                <div>
+                  <p className="text-lg font-bold text-white leading-none">{unansweredAnswers}</p>
+                  <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider mt-1">Unanswered</p>
+                </div>
+              </div>
 
-                  <p className="review-question-text">{decodeHtml(q.question)}</p>
+              {/* Total Questions */}
+              <div className="bg-slate-950/40 border border-slate-800/80 rounded-xl p-4 flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-cyan-500/10 text-cyan-400 flex items-center justify-center">
+                  <FileText className="w-5 h-5" />
+                </div>
+                <div>
+                  <p className="text-lg font-bold text-white leading-none">{totalQuestions}</p>
+                  <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider mt-1">Total</p>
+                </div>
+              </div>
 
-                  <div className="review-answers-box">
-                    <div className="review-answer-row">
-                      <span className="answer-row-label">Your Answer:</span>
-                      <span className={`answer-row-value ${isCorrect ? 'text-success fw-bold' : isUnanswered ? 'text-muted italic' : 'text-danger fw-bold'}`}>
-                        {isUnanswered ? 'Unanswered (Out of Time)' : decodeHtml(q.selected_answer || '')}
+            </div>
+          </div>
+
+          {/* Detailed Review Section */}
+          <div className="space-y-4 pt-2">
+            <h3 className="text-lg font-bold font-heading text-white flex items-center gap-2">
+              <Trophy className="w-5 h-5 text-violet-400" />
+              <span>Question Review</span>
+            </h3>
+
+            {/* Scrollable list */}
+            <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2 scrollbar-thin">
+              {questions.map((q, idx) => {
+                const isCorrect = q.selected_answer !== undefined && q.selected_answer === q.correct_answer;
+                const isUnanswered = q.selected_answer === undefined;
+                
+                let cardBorder = '';
+                let statusBadge = null;
+
+                if (isUnanswered) {
+                  cardBorder = 'border-l-4 border-l-slate-600 bg-slate-950/10';
+                  statusBadge = (
+                    <span className="w-5 h-5 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center">
+                      <Clock className="w-3 h-3" />
+                    </span>
+                  );
+                } else if (isCorrect) {
+                  cardBorder = 'border-l-4 border-l-emerald-500 bg-emerald-500/5';
+                  statusBadge = (
+                    <span className="w-5 h-5 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center">
+                      <Check className="w-3 h-3" strokeWidth={3} />
+                    </span>
+                  );
+                } else {
+                  cardBorder = 'border-l-4 border-l-red-500 bg-red-500/5';
+                  statusBadge = (
+                    <span className="w-5 h-5 rounded-full bg-red-500 text-slate-950 flex items-center justify-center">
+                      <X className="w-3 h-3" strokeWidth={3} />
+                    </span>
+                  );
+                }
+
+                return (
+                  <div key={idx} className={`border border-slate-800/80 rounded-xl p-4 space-y-3 transition-all ${cardBorder}`}>
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center gap-2">
+                        {statusBadge}
+                        <span className="text-xs font-bold text-slate-200">Question {idx + 1}</span>
+                      </div>
+                      <span className="text-[10px] font-bold bg-slate-950/60 border border-slate-800/80 px-2 py-0.5 rounded text-slate-400 uppercase tracking-wider">
+                        {q.difficulty}
                       </span>
                     </div>
-                    
-                    {!isCorrect && (
-                      <div className="review-answer-row">
-                        <span className="answer-row-label">Correct Answer:</span>
-                        <span className="answer-row-value text-success fw-bold">
-                          {decodeHtml(q.correct_answer)}
+
+                    <p className="text-sm text-slate-300 font-medium leading-relaxed">
+                      {decodeHtml(q.question)}
+                    </p>
+
+                    <div className="bg-slate-950/50 rounded-lg p-3 space-y-1.5 text-xs">
+                      <div className="flex justify-between">
+                        <span className="text-slate-500 font-semibold uppercase tracking-wider text-[9px]">Your Answer:</span>
+                        <span className={`font-bold ${isCorrect ? 'text-emerald-400' : isUnanswered ? 'text-slate-500 italic' : 'text-red-400'}`}>
+                          {isUnanswered ? 'Unanswered (Out of Time)' : decodeHtml(q.selected_answer || '')}
                         </span>
                       </div>
-                    )}
+                      {!isCorrect && (
+                        <div className="flex justify-between border-t border-slate-900 pt-1.5">
+                          <span className="text-slate-500 font-semibold uppercase tracking-wider text-[9px]">Correct Answer:</span>
+                          <span className="font-bold text-emerald-400">{decodeHtml(q.correct_answer)}</span>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
-        </div>
+        </CardContent>
 
         {/* Action Button */}
-        <div className="results-actions">
-          <button onClick={onRestart} className="btn btn-primary btn-large">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
-            </svg>
+        <div className="p-8 border-t border-slate-800/80 flex justify-center">
+          <Button
+            onClick={onRestart}
+            className="w-full max-w-xs bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-semibold rounded-xl h-11 shadow-lg shadow-violet-500/20 transition-all duration-300 hover:translate-y-[-1px] active:translate-y-[1px] gap-2"
+          >
+            <RotateCcw className="w-4 h-4" />
             <span>Play Again</span>
-          </button>
+          </Button>
         </div>
 
-      </div>
+      </Card>
     </div>
   );
 };

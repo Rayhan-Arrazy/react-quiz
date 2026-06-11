@@ -1,4 +1,9 @@
 import React, { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { HelpCircle, ArrowRight } from 'lucide-react';
 
 interface LoginProps {
   onLogin: (username: string) => void;
@@ -22,46 +27,57 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
   };
 
   return (
-    <div className="card-container fade-in">
-      <div className="login-card">
-        <div className="login-header">
-          <div className="logo-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/>
-              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
-              <line x1="12" y1="17" x2="12.01" y2="17"/>
-            </svg>
+    <div className="w-full max-w-md mx-auto fade-in">
+      <Card className="border-slate-800 bg-slate-900/60 backdrop-blur-xl shadow-2xl relative overflow-hidden">
+        {/* Glow indicator at the top */}
+        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-violet-500 via-fuchsia-500 to-cyan-500"></div>
+        
+        <CardHeader className="text-center pt-8 pb-4">
+          <div className="mx-auto w-14 h-14 bg-gradient-to-tr from-violet-600 to-cyan-400 rounded-2xl flex items-center justify-content-center text-white shadow-lg shadow-violet-500/20 mb-4">
+            <HelpCircle className="w-8 h-8" strokeWidth={2.5} />
           </div>
-          <h2>TriviaQuest</h2>
-          <p>Challenge your knowledge across arbitrary topics</p>
-        </div>
+          <CardTitle className="text-3xl font-extrabold tracking-tight text-white font-heading">
+            TriviaQuest
+          </CardTitle>
+          <CardDescription className="text-slate-400 mt-2">
+            Challenge your knowledge across dynamic trivia categories
+          </CardDescription>
+        </CardHeader>
 
-        <form onSubmit={handleSubmit} className="login-form">
-          <div className="input-group">
-            <label htmlFor="username">Username</label>
-            <input
-              type="text"
-              id="username"
-              placeholder="Enter your username..."
-              value={username}
-              onChange={(e) => {
-                setUsername(e.target.value);
-                if (error) setError('');
-              }}
-              autoComplete="off"
-            />
-            {error && <span className="error-message">{error}</span>}
-          </div>
+        <form onSubmit={handleSubmit}>
+          <CardContent className="space-y-4 pt-2 pb-6">
+            <div className="space-y-2 text-left">
+              <Label htmlFor="username" className="text-slate-300 text-xs font-semibold uppercase tracking-wider">
+                Username
+              </Label>
+              <Input
+                type="text"
+                id="username"
+                placeholder="Enter your username..."
+                value={username}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setUsername(e.target.value);
+                  if (error) setError('');
+                }}
+                className="bg-slate-950/80 border-slate-800 text-white placeholder-slate-500 focus-visible:ring-violet-500 focus-visible:border-violet-500 rounded-xl h-11"
+                autoComplete="off"
+              />
+              {error && <p className="text-red-500 text-xs mt-1 font-medium">{error}</p>}
+            </div>
+          </CardContent>
 
-          <button type="submit" id="login-submit-btn" className="btn btn-primary">
-            <span>Get Started</span>
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="5" y1="12" x2="19" y2="12"/>
-              <polyline points="12 5 19 12 12 19"/>
-            </svg>
-          </button>
+          <CardFooter className="pb-8">
+            <Button
+              type="submit"
+              id="login-submit-btn"
+              className="w-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-semibold rounded-xl h-11 shadow-lg shadow-violet-500/20 transition-all duration-300 hover:translate-y-[-1px] active:translate-y-[1px]"
+            >
+              <span>Get Started</span>
+              <ArrowRight className="w-4 h-4 ml-2" />
+            </Button>
+          </CardFooter>
         </form>
-      </div>
+      </Card>
     </div>
   );
 };
