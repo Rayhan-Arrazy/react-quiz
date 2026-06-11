@@ -162,8 +162,8 @@ body {
   flex: 1;
   display: flex;
   justify-content: center;
-  align-items: center;
-  padding: 2.5rem 1.5rem;
+  align-items: flex-start;
+  padding: 2rem 1.5rem 4rem 1.5rem;
   width: 100%;
   max-width: 900px;
   margin: 0 auto;
