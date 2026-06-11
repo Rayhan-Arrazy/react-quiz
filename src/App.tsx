@@ -4,7 +4,7 @@ import { Setup } from './components/Setup';
 import type { QuizConfig } from './components/Setup';
 import { Quiz } from './components/Quiz';
 import { Results } from './components/Results';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { AlertTriangle } from 'lucide-react';
 
@@ -281,11 +281,6 @@ export default function App() {
 
       <header className="app-main-header">
         <div className="header-logo">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/>
-            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
-            <line x1="12" y1="17" x2="12.01" y2="17"/>
-          </svg>
           <h1>TriviaQuest</h1>
         </div>
       </header>
@@ -316,24 +311,24 @@ export default function App() {
 
         {/* Saved Session Resume Modal using Shadcn Dialog */}
         <Dialog open={!!savedSession} onOpenChange={() => {}}>
-          <DialogContent className="border-slate-800 bg-slate-900/95 text-white max-w-md rounded-2xl">
+          <DialogContent className="border-slate-200 bg-white text-slate-900 max-w-md rounded-2xl shadow-xl">
             <DialogHeader className="text-center flex flex-col items-center">
-              <div className="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center mb-3 animate-bounce">
+              <div className="w-12 h-12 rounded-xl bg-cyellow/15 text-[#c9a800] flex items-center justify-center mb-3 animate-bounce">
                 <AlertTriangle className="w-6 h-6" />
               </div>
-              <DialogTitle className="text-xl font-bold font-heading text-white">Unfinished Quiz Found!</DialogTitle>
-              <DialogDescription className="text-slate-400 text-sm text-center mt-2 leading-relaxed">
+              <DialogTitle className="text-xl font-bold font-heading text-slate-900">Unfinished Quiz Found!</DialogTitle>
+              <DialogDescription className="text-slate-500 text-sm text-center mt-2 leading-relaxed">
                 Hello <strong>{savedSession?.username}</strong>, we found an unfinished active quiz. You have <strong>{savedSession ? savedSession.questions.length - savedSession.currentIndex : 0}</strong> questions left and <strong>{savedSession ? Math.floor(savedSession.timeLeft / 60) : 0}m {savedSession ? savedSession.timeLeft % 60 : 0}s</strong> remaining on the timer.
               </DialogDescription>
             </DialogHeader>
-            <DialogFooter className="mt-6 flex flex-row gap-3 w-full">
-              <Button variant="secondary" onClick={handleDiscardSession} className="flex-1 bg-slate-950 border-slate-800 text-slate-300 hover:bg-slate-900 hover:text-white rounded-xl h-11 text-xs">
+            <div className="flex flex-row gap-3 w-full" style={{ marginTop: '24px' }}>
+              <Button variant="secondary" onClick={handleDiscardSession} className="flex-1 bg-slate-100 border-slate-200 text-slate-600 hover:bg-slate-200 hover:text-slate-900 rounded-xl h-11 text-xs">
                 Discard & Start New
               </Button>
-              <Button onClick={handleResumeSession} className="flex-1 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-semibold rounded-xl h-11 text-xs shadow-lg shadow-violet-500/20">
+              <Button onClick={handleResumeSession} className="flex-1 bg-gradient-to-r from-cpurple to-cpink hover:from-cpurple/90 hover:to-cpink/90 text-white font-semibold rounded-xl h-11 text-xs shadow-lg shadow-cpurple/25">
                 Resume Quiz
               </Button>
-            </DialogFooter>
+            </div>
           </DialogContent>
         </Dialog>
 
@@ -371,7 +366,7 @@ export default function App() {
       </main>
 
       <footer className="app-main-footer-bottom">
-        <p>&copy; 2026 TriviaQuest. Powered by OpenTDB. Developed with premium React tech.</p>
+        <p>&copy; 2026 TriviaQuest. Powered by OpenTDB. Developed with React.</p>
       </footer>
     </div>
   );

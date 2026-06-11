@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Select,
   SelectContent,
@@ -36,12 +35,11 @@ export const Setup: React.FC<SetupProps> = ({ username, onStart, onLogout }) => 
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   
-  // Quiz configuration states
   const [amount, setAmount] = useState(10);
   const [category, setCategory] = useState('any');
   const [difficulty, setDifficulty] = useState('any');
   const [type, setType] = useState('any');
-  const [timeLimit, setTimeLimit] = useState(120); // default 2 minutes (120 seconds)
+  const [timeLimit, setTimeLimit] = useState(120);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -53,7 +51,6 @@ export const Setup: React.FC<SetupProps> = ({ username, onStart, onLogout }) => 
         }
       } catch (err) {
         console.error('Failed to fetch categories, using fallback values.', err);
-        // Fallback common categories in case API fails or rate limits
         setCategories([
           { id: 9, name: 'General Knowledge' },
           { id: 11, name: 'Entertainment: Film' },
@@ -91,48 +88,50 @@ export const Setup: React.FC<SetupProps> = ({ username, onStart, onLogout }) => 
 
   return (
     <div className="w-full max-w-2xl mx-auto fade-in">
-      <Card className="border-slate-800 bg-slate-900/60 backdrop-blur-xl shadow-2xl relative overflow-hidden">
-        {/* Glow indicator at the top */}
-        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-violet-500 via-fuchsia-500 to-cyan-500"></div>
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-lg shadow-slate-200/50 relative overflow-hidden">
+        {/* Glow indicator */}
+        <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-cpurple via-cpink to-caqua"></div>
 
-        <CardHeader className="flex flex-row items-center justify-between border-b border-slate-800/80 pb-6 pt-8 px-8">
-          <div className="flex items-center gap-3 text-left">
-            <div className="w-11 h-11 rounded-xl bg-cyan-950 border border-cyan-500 text-cyan-400 flex items-center justify-center font-extrabold text-sm shadow-md shadow-cyan-500/10">
+        {/* Header with user + logout */}
+        <div className="flex items-center justify-between border-b border-slate-100" style={{ padding: '32px 40px' }}>
+          <div className="flex items-center gap-4 text-left">
+            <div className="w-12 h-12 rounded-xl bg-cblue/10 border border-cblue/30 text-cblue flex items-center justify-center font-extrabold text-sm shadow-sm shrink-0">
               {username.slice(0, 2).toUpperCase()}
             </div>
             <div>
-              <CardTitle className="text-lg font-bold text-white font-heading">
+              <h3 className="text-lg font-bold text-slate-900 font-heading">
                 Welcome back, {username}!
-              </CardTitle>
-              <CardDescription className="text-slate-400 text-xs">
+              </h3>
+              <p className="text-slate-500 text-xs mt-0.5">
                 Configure your game settings below
-              </CardDescription>
+              </p>
             </div>
           </div>
           <Button 
             variant="ghost" 
             onClick={onLogout} 
             id="logout-btn"
-            className="text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg h-9 px-3 gap-2"
+            className="text-slate-400 hover:text-cpink hover:bg-cpink/5 rounded-lg h-9 px-3 gap-2 shrink-0"
           >
             <LogOut className="w-4 h-4" />
             <span className="text-xs font-semibold">Logout</span>
           </Button>
-        </CardHeader>
+        </div>
 
+        {/* Form */}
         <form onSubmit={handleSubmit}>
-          <CardContent className="p-8 space-y-6 text-left">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="text-left" style={{ padding: '40px 40px 16px 40px' }}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               
               {/* Number of Questions */}
-              <div className="space-y-3">
+              <div className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <Label htmlFor="amount-slider" className="text-slate-300 text-xs font-semibold uppercase tracking-wider">
+                  <Label htmlFor="amount-slider" className="text-slate-600 text-xs font-semibold uppercase tracking-wider">
                     Number of Questions
                   </Label>
-                  <span className="text-cyan-400 font-bold font-heading text-sm">{amount}</span>
+                  <span className="text-cblue font-bold font-heading text-sm bg-cblue/10 px-2.5 py-0.5 rounded-lg">{amount}</span>
                 </div>
-                <div className="flex items-center gap-4 py-2">
+                <div className="py-1">
                   <Slider
                     id="amount-slider"
                     min={5}
@@ -146,16 +145,16 @@ export const Setup: React.FC<SetupProps> = ({ username, onStart, onLogout }) => 
               </div>
 
               {/* Time Limit */}
-              <div className="space-y-3">
+              <div className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <Label htmlFor="timeLimit-slider" className="text-slate-300 text-xs font-semibold uppercase tracking-wider">
+                  <Label htmlFor="timeLimit-slider" className="text-slate-600 text-xs font-semibold uppercase tracking-wider">
                     Time Limit
                   </Label>
-                  <span className="text-violet-400 font-bold font-heading text-sm">
+                  <span className="text-cpurple font-bold font-heading text-sm bg-cpurple/10 px-2.5 py-0.5 rounded-lg">
                     {Math.floor(timeLimit / 60)}m {timeLimit % 60}s
                   </span>
                 </div>
-                <div className="flex items-center gap-4 py-2">
+                <div className="py-1">
                   <Slider
                     id="timeLimit-slider"
                     min={30}
@@ -169,15 +168,15 @@ export const Setup: React.FC<SetupProps> = ({ username, onStart, onLogout }) => 
               </div>
 
               {/* Category */}
-              <div className="space-y-2">
-                <Label htmlFor="category" className="text-slate-300 text-xs font-semibold uppercase tracking-wider">
+              <div className="space-y-3">
+                <Label htmlFor="category" className="text-slate-600 text-xs font-semibold uppercase tracking-wider">
                   Category
                 </Label>
                 <Select value={category} onValueChange={setCategory} disabled={loading}>
-                  <SelectTrigger id="category" className="bg-slate-950/80 border-slate-800 text-white rounded-xl h-11 focus:ring-violet-500 focus:border-violet-500">
+                  <SelectTrigger id="category" className="bg-slate-50 border-slate-200 text-slate-900 rounded-xl h-12 focus:ring-cpurple/30 focus:border-cpurple">
                     <SelectValue placeholder="Any Category" />
                   </SelectTrigger>
-                  <SelectContent className="bg-slate-900 border-slate-800 text-white rounded-xl">
+                  <SelectContent className="bg-white border-slate-200 text-slate-900 rounded-xl shadow-lg">
                     <SelectItem value="any">Any Category</SelectItem>
                     {categories.map((cat) => (
                       <SelectItem key={cat.id} value={cat.id.toString()}>
@@ -189,15 +188,15 @@ export const Setup: React.FC<SetupProps> = ({ username, onStart, onLogout }) => 
               </div>
 
               {/* Difficulty */}
-              <div className="space-y-2">
-                <Label htmlFor="difficulty" className="text-slate-300 text-xs font-semibold uppercase tracking-wider">
+              <div className="space-y-3">
+                <Label htmlFor="difficulty" className="text-slate-600 text-xs font-semibold uppercase tracking-wider">
                   Difficulty
                 </Label>
                 <Select value={difficulty} onValueChange={setDifficulty}>
-                  <SelectTrigger id="difficulty" className="bg-slate-950/80 border-slate-800 text-white rounded-xl h-11 focus:ring-violet-500 focus:border-violet-500">
+                  <SelectTrigger id="difficulty" className="bg-slate-50 border-slate-200 text-slate-900 rounded-xl h-12 focus:ring-cpurple/30 focus:border-cpurple">
                     <SelectValue placeholder="Any Difficulty" />
                   </SelectTrigger>
-                  <SelectContent className="bg-slate-900 border-slate-800 text-white rounded-xl">
+                  <SelectContent className="bg-white border-slate-200 text-slate-900 rounded-xl shadow-lg">
                     <SelectItem value="any">Any Difficulty</SelectItem>
                     <SelectItem value="easy">Easy</SelectItem>
                     <SelectItem value="medium">Medium</SelectItem>
@@ -207,15 +206,15 @@ export const Setup: React.FC<SetupProps> = ({ username, onStart, onLogout }) => 
               </div>
 
               {/* Question Type */}
-              <div className="space-y-2 md:col-span-2">
-                <Label htmlFor="type" className="text-slate-300 text-xs font-semibold uppercase tracking-wider">
+              <div className="space-y-3 md:col-span-2">
+                <Label htmlFor="type" className="text-slate-600 text-xs font-semibold uppercase tracking-wider">
                   Question Type
                 </Label>
                 <Select value={type} onValueChange={setType}>
-                  <SelectTrigger id="type" className="bg-slate-950/80 border-slate-800 text-white rounded-xl h-11 focus:ring-violet-500 focus:border-violet-500">
+                  <SelectTrigger id="type" className="bg-slate-50 border-slate-200 text-slate-900 rounded-xl h-12 focus:ring-cpurple/30 focus:border-cpurple">
                     <SelectValue placeholder="Any Type" />
                   </SelectTrigger>
-                  <SelectContent className="bg-slate-900 border-slate-800 text-white rounded-xl">
+                  <SelectContent className="bg-white border-slate-200 text-slate-900 rounded-xl shadow-lg">
                     <SelectItem value="any">Any Type</SelectItem>
                     <SelectItem value="multiple">Multiple Choice</SelectItem>
                     <SelectItem value="boolean">True / False</SelectItem>
@@ -224,14 +223,16 @@ export const Setup: React.FC<SetupProps> = ({ username, onStart, onLogout }) => 
               </div>
 
             </div>
-          </CardContent>
+          </div>
 
-          <CardFooter className="px-8 pb-8">
+          {/* Start button */}
+          <div style={{ padding: '16px 40px 40px 40px' }}>
             <Button
               type="submit"
               id="start-quiz-btn"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-semibold rounded-xl h-12 shadow-lg shadow-violet-500/20 transition-all duration-300 hover:translate-y-[-1px] active:translate-y-[1px]"
+              className="w-full bg-gradient-to-r from-cpurple to-cpink hover:opacity-90 text-white font-semibold rounded-xl shadow-md shadow-cpurple/20 transition-all duration-300 hover:translate-y-[-1px] active:translate-y-[1px]"
+              style={{ height: '52px' }}
             >
               {loading ? (
                 <span>Loading categories...</span>
@@ -242,9 +243,9 @@ export const Setup: React.FC<SetupProps> = ({ username, onStart, onLogout }) => 
                 </>
               )}
             </Button>
-          </CardFooter>
+          </div>
         </form>
-      </Card>
+      </div>
     </div>
   );
 };
