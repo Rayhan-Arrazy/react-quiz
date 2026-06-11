@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # TriviaQuest
 
 TriviaQuest is a dynamic, fully-featured trivia application built with React and TypeScript. It leverages the [Open Trivia Database (OpenTDB)](https://opentdb.com/) API to provide an endless supply of questions across various categories and difficulties.
@@ -60,6 +59,3 @@ This will generate an optimized `dist` folder ready for deployment.
 ## Acknowledgements
 
 - Questions provided by [OpenTDB](https://opentdb.com/).
-=======
-
->>>>>>> 47cc42947cc41e084bd971a2ee4c6fa7148d6d7e
